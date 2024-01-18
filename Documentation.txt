@@ -1,0 +1,84 @@
+
+Summary:
+This program is designed to find all prime numbers between 1 and 10e8 using a modified sieve of eratosthenes.
+It divides the range of numbers into 8 segments and processes each segment in seperate threads before combining the rseults.
+
+For compilation instructions please see README.txt
+
+Research Sources:
+https://www.geeksforgeeks.org/sieve-of-eratosthenes/
+This source inspired my sieve of eratosthenes implementation and provided the background knowledge for me to understand 
+how I needed to modify it.
+
+https://www.geeksforgeeks.org/segmented-sieve/
+I had the idea to cut it into several threads and run sieve independetly on each of them.
+This was not as efficent since I had to allocated and combine multiple arrays. This source
+demonstrated an alternative approach.
+
+
+Statements and Proof of Correctness:
+The programs correctness is demonstrated primarily by the classical Sieve of Eratosthenes algorithm.
+
+1.The full range of 1 to 10e8 is divided into 8 smaller 12500000 integer long segments. 
+  Each segment is processed indepently.
+2.Since each thread operates on a different segment his ensures no overlap or race conditions.
+3.This algorithim performs prime checking to accurately mark non prime numbers in each segment.
+4.The count and sum of primes for a particular segment are also evaluated independetly before being combined.
+  This ensures that the finaly tally is accurate.
+
+Efficency Analysis:
+The program utilizes eight threads to process different segments simultaneously, significantly reducing the overall execution time compared to a single-threaded approach.
+The algorithm only marks multiples of primes up to the square root of the upper limit, reducing the number of operations
+By segmenting the range, the program avoids allocating a large array to store the entire range of numbers up to 10^8, thereby efficiently managing memory usage.
+Each thread processes an equal-sized segment of the range, ensuring an even distribution of computational load.
+
+Experimental Evaluation:
+My computer is a Lenovo Yoga 6 laptop. 
+
+NumberOfCores  NumberOfLogicalProcessors
+8              16
+
+When I was first developing my program I wanted to compare its output to just doing sieve of eratosthenes without segmenting.
+Initally I ran sieve on 8 seperate threads for each range. This actually turned out to be slower by 3 whole seconds than simply running the sieve on it's own(2 seconds).
+
+However when I employed the segmented method I was consistently getting below 1 second. 
+Below are an example of three seperate runs on my machine:
+
+1.
+Execution Time: 796 ms, Total number of primes: 5761455, Sum of all primes: 279209790387276
+Top Ten Primes:
+99999787 99999821 99999827 99999839 99999847 99999931 99999941 99999959 99999971 99999989
+
+2.
+Execution Time: 848 ms, Total number of primes:[Omitted for brevity]
+
+3.
+Execution Time: 856 ms, Total number of primes: [Omitted for brevity]
+
+The next thing I did was make the range into something smaller for testing.
+So I tried my approach on the ranges 1-800 and 1-96.
+1-96:
+Execution Time: 0 ms, Total number of primes: 24, Sum of all primes: 963
+Top Ten Primes:
+0 0 0 0 0 0 0 0 0 89
+
+The amount of primes and the sum is correct.
+However the Top-ten function didn't work. 
+This is because there weren't 10 primes in each segment. 
+For our purposes with 10e8 the ranges were large enough to in clude at least 10 primes so we would not encounter
+this issue for our specfic purpose.
+
+1-800:
+Execution Time: 1 ms, Total number of primes: 139, Sum of all primes: 50078
+Top Ten Primes:
+733 739 743 751 757 761 769 773 787 797
+
+These amounts and sums were verified using this website: https://www.factors-of.com/primes-from-to/prime-numbers-between_1_and_800 and hand adding all of the results.
+
+
+
+
+
+
+
+
